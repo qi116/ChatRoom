@@ -26,14 +26,14 @@
 
   
 
-  <form method="post">
-  <label for="fname">Message: </label>
-  <input type="text" id="msg" name="fname"><br><br>
   
-  <input type="button" onclick="sendMessage()" value="Send"> 
+  <label for="fname">Message: </label>
+  <input type="text" id="msg" name="fname">
+  
+  <input type="button" onclick="sendMessage()" value="Send" id="submit"> 
 
 
-</form>
+
 </body>
 
 <script type="text/javascript">
@@ -53,7 +53,20 @@
 
   function sendMessage() {
     var msg = document.getElementById("msg").value
+    document.getElementById("msg").value = ''
     var json = {"User" : "user", "Message" : msg}
     socket.emit("message", json)
   }
+
+
+
+  var input = document.getElementById("msg");
+  input.addEventListener("keyup", function(event) {
+      if (event.keyCode === 13) {
+        console.log("enter")
+          event.preventDefault();
+          document.getElementById("submit").click();
+      }
+  });
+
  </script>
