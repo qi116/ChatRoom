@@ -21,5 +21,39 @@
 	
 	<h3 style='color: #ccc;font-size: 30px;'>No message yet..</h3>
   <button onclick = "printStatement()">bigger  </button>
+
+  <p id="p">No messages</p>
+
+  
+
+  <form method="post">
+  <label for="fname">Message: </label>
+  <input type="text" id="msg" name="fname"><br><br>
+  
+  <input type="button" onclick="sendMessage()" value="Send"> 
+
+
+</form>
 </body>
 
+<script type="text/javascript">
+  var socket = io.connect('http://' + document.domain + ':' + location.port)
+
+  socket.on('post message', function(json) {
+    console.log('posting message to board')
+
+    var paragraph = document.getElementById("p");
+    var text = document.createTextNode(json.User + ": " + json.Message);
+
+    paragraph.appendChild(text);
+    var concat = paragraph.innerHTML + "<br>"
+    paragraph.innerHTML = concat
+
+  })
+
+  function sendMessage() {
+    var msg = document.getElementById("msg").value
+    var json = {"User" : "user", "Message" : msg}
+    socket.emit("message", json)
+  }
+ </script>
