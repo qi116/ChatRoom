@@ -36,6 +36,6 @@ def receive_message(json, methods=['GET', 'POST']):
 	socketio.emit('post message', json, callback=messageReceived)
 
 
-if __name__ == '__main__':
-    socketio.run(app, debug=True, port = 5000, host = "0.0.0.0")
+#if __name__ == '__main__':
+ #   socketio.run(app, debug=True, port = 5000, host = "0.0.0.0")
 
