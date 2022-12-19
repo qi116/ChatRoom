@@ -4,16 +4,18 @@
 
   <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> Multiplayer </title>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> 
+
+  <title> Chat room </title>
 
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
   <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
   <!-- <link rel = "stylesheet" type="text/css" href="./style.css"> -->
   <link rel="shortcut icon" href="#">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>-->
   <script src="{{url_for('static', filename='styles/main.js')}}"></script>
-
+  <script src="https://js.pusher.com/5.0/pusher.min.js"></script>
 </head>
 <body>
 	
@@ -21,25 +23,32 @@
 	
 	<h3 style='color: #ccc;font-size: 30px;'>No message yet..</h3>
   <button onclick = "printStatement()">bigger  </button>
+  <div id="content">
 
-  <p id="p">No messages</p>
-
+    <p id="p">No messages</p>
+  </div>
   
 
-  
+<form id="msg-form">  
   <label for="fname">Message: </label>
-  <input type="text" id="msg" name="fname">
+  <input type="text" id="msg" name="msg">
   
-  <input type="button" onclick="sendMessage()" value="Send" id="submit"> 
-
+  <input type="submit" value="Send" id="submit"> 
+</form>
+  
+  <form action = "/message" method = "post">
+         <p>Enter Name:</p>
+         <p><input type = "text" name = "nm" /></p>
+         <p><input type = "submit" value = "submit" /></p>
+      </form>  
 
 
 </body>
 
 <script type="text/javascript">
-  var socket = io.connect('http://' + document.domain + ':' + location.port)
+//var socket = io.connect('http://' + document.domain + ':' + location.port)
 
-  socket.on('post message', function(json) {
+  /*socket.on('post message', function(json) {
     console.log('posting message to board')
 
     var paragraph = document.getElementById("p");
@@ -49,24 +58,83 @@
     var concat = paragraph.innerHTML + "<br>"
     paragraph.innerHTML = concat
 
-  })
-
+  })*/
+  var form = document.querySelector('#msg-form');
+  form.onsubmit = e => {
+    e.preventDefault();
+    fData = new FormData(form)
+    fData.append("user", "user")
+    fetch("/message", {
+      method: 'POST',
+      body: fData
+    })
+    .then(r => {
+      form.reset();
+    });
+  }   
+  /*
   function sendMessage() {
     var msg = document.getElementById("msg").value
     document.getElementById("msg").value = ''
-    var json = {"User" : "user", "Message" : msg}
-    socket.emit("message", json)
+    var json = {"user" : "user", "msg" : msg}
+    console.log("Data:")
+    console.log(json)
+    pushData(json)
   }
+*/
 
 
-
-  var input = document.getElementById("msg");
+  /*var input = document.getElementById("msg");
   input.addEventListener("keyup", function(event) {
       if (event.keyCode === 13) {
         console.log("enter")
           event.preventDefault();
           document.getElementById("submit").click();
       }
-  });
+  });*/
 
+ </script>
+
+ <script type="text/javascript"> 
+  // Initialize Channels client
+let channels = new Pusher('ee9c18f3062cb4ecdf9d', {
+  cluster: 'us3',
+  encrypted: true
+});
+
+// Subscribe to the appropriate channel
+let channel = channels.subscribe('messaging');
+
+// Bind a callback function to an event within the subscribed channel
+channel.bind('my-event', function (data) {
+  // Do what you wish with the data from the event
+  console.log(data)
+  let user = data.user;
+  let msg = data.msg;
+  console.log(msg)
+  let message_template = `<article class="media">
+                                  <div class="media-content">
+                                    <div class="content">
+                                      <p>
+                                        <strong>${user}: </strong>
+                                         ${msg}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </article>`;
+ var content = document.getElementById("content")
+ content.innerHTML = content.innerHTML + message_template
+});
+
+/*async function pushData(data) {
+  console.log("pushData")
+  console.log(data)
+  const res = await fetch('/message', {
+    method: 'POST',
+    body: {"yo": "dog"},
+  });
+  if (!res.ok) {
+    console.error('failed to push data');
+  }
+}*/
  </script>
