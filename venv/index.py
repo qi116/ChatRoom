@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, url_for, flash, redirect, request
+from flask import Flask, render_template, jsonify, request, url_for, flash, redirect, request, session
 #from flask_socketio import SocketIO
 import time
 
@@ -26,12 +26,51 @@ app.config['SECRET_KEY'] = 'f03a2ea0b16bfc14f0af5ed54553f84a0877604ca3e9fa25'
 
 @app.route('/', methods = ['POST', 'GET'])
 def home():
-	#pusher_client.trigger('messaging', 'my-event', {'user': 'hello world', 'msg': 'hi there'})
-
-	return render_template('base.html')
+	if not session.get("user"):
+		print("here")
+		return redirect("/login")
+	user = session.get('user', None)
+	print(user)
+	return render_template('base.html', user=user)
 
 def messageReceived(methods=['GET', 'POST']):
     print('message was received!!!')
+
+@app.route("/logout")
+def logout():
+	session["user"] = None
+	return redirect("/")
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+	error = None
+	print(request.form)
+	if request.method == 'POST':
+		if request.form['pass'] != 'admin': #request.form['email'] != 'admin@gmail' or 
+			print('Incorrect')
+			error = 'Invalid Credentials. Please try again.'
+		else:
+			print('Correct')
+			session['user'] = request.form['email']
+			return redirect("/")
+	return render_template('login.html', error=error)
+
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+# 	try:
+# 		print(request.form)
+# 		error = None
+# 		if request.form['email'] != 'admin@gmail' or request.form['pass'] != 'admin':
+# 			error = 'Invalid Credentials. Please try again.'
+# 			print('here')
+# 		else:
+# 			print('Correct')
+# 			return redirect(url_for('base'))
+# 	except Exception as e:
+# 		print(e)
+# 		return jsonify({'result' : 'failure'})
+# 	print('here2')
+# 	return render_template('login.html', error=error)
 
 @app.route('/message', methods=['GET', 'POST'])
 def message():
@@ -50,9 +89,8 @@ def message():
 	except Exception as e:
 		print(e)
 		return jsonify({'result' : 'failure'})
-@app.route('/success/<name>')
-def success(name):
-   return 'welcome %s' % name
+
+
 
 
 # @socketio.on('my event')
@@ -66,7 +104,6 @@ def success(name):
 # 	print('message: ' + str(json))
 # 	socketio.emit('post message', json, callback=messageReceived)
 
-
 if __name__ == '__main__':
-   app.run(debug = True)
+	app.run(debug = True)
 
