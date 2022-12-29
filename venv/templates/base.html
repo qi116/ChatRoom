@@ -52,19 +52,7 @@
 </body>
 
 <script type="text/javascript">
-//var socket = io.connect('http://' + document.domain + ':' + location.port)
 
-  /*socket.on('post message', function(json) {
-    console.log('posting message to board')
-
-    var paragraph = document.getElementById("p");
-    var text = document.createTextNode(json.User + ": " + json.Message);
-
-    paragraph.appendChild(text);
-    var concat = paragraph.innerHTML + "<br>"
-    paragraph.innerHTML = concat
-
-  })*/
   var form = document.querySelector('#msg-form');
   form.onsubmit = e => {
     e.preventDefault();
@@ -78,26 +66,7 @@
       form.reset();
     });
   }   
-  /*
-  function sendMessage() {
-    var msg = document.getElementById("msg").value
-    document.getElementById("msg").value = ''
-    var json = {"user" : "user", "msg" : msg}
-    console.log("Data:")
-    console.log(json)
-    pushData(json)
-  }
-*/
-
-
-  /*var input = document.getElementById("msg");
-  input.addEventListener("keyup", function(event) {
-      if (event.keyCode === 13) {
-        console.log("enter")
-          event.preventDefault();
-          document.getElementById("submit").click();
-      }
-  });*/
+  
 
  </script>
 
@@ -130,8 +99,44 @@ channel.bind('my-event', function (data) {
                                 </article>`;
  var content = document.getElementById("content")
  content.innerHTML = content.innerHTML + message_template
+ //Make sure to continue to use .innerHTML or be wary of XSS injection
+ //The current method prevents script tags from being run, but others do not
+ //In the future, also make sure to implement special character rejection E.g. <>,./ etc.
 });
 
+//var socket = io.connect('http://' + document.domain + ':' + location.port)
+
+  /*socket.on('post message', function(json) {
+    console.log('posting message to board')
+
+    var paragraph = document.getElementById("p");
+    var text = document.createTextNode(json.User + ": " + json.Message);
+
+    paragraph.appendChild(text);
+    var concat = paragraph.innerHTML + "<br>"
+    paragraph.innerHTML = concat
+
+  })*/
+/*
+  function sendMessage() {
+    var msg = document.getElementById("msg").value
+    document.getElementById("msg").value = ''
+    var json = {"user" : "user", "msg" : msg}
+    console.log("Data:")
+    console.log(json)
+    pushData(json)
+  }
+*/
+
+
+  /*var input = document.getElementById("msg");
+  input.addEventListener("keyup", function(event) {
+      if (event.keyCode === 13) {
+        console.log("enter")
+          event.preventDefault();
+          document.getElementById("submit").click();
+      }
+  });*/
 /*async function pushData(data) {
   console.log("pushData")
   console.log(data)
