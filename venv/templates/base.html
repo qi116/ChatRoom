@@ -45,6 +45,8 @@
   <p class="user"><strong>User:</strong> {{ user }}
   <script>
     var user = '{{user}}' //passes value of user from html render template to js
+    // user = user.replace(/&lt;/g, '<')
+    // user = user.replace(/&gt;/g, '>')
     console.log(user)
   </script>
 {% endif %}
@@ -98,6 +100,11 @@ channel.bind('my-event', function (data) {
                                   </div>
                                 </article>`;
  var content = document.getElementById("content")
+ /*
+ var node = document.createElement('p')
+ node.innerHTML = message_template
+ content.append(node)
+  */
  content.innerHTML = content.innerHTML + message_template
  //Make sure to continue to use .innerHTML or be wary of XSS injection
  //The current method prevents script tags from being run, but others do not
