@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request, url_for, flash, redirect, request, session
 #from flask_socketio import SocketIO
 import time
+from datetime import timedelta
 
 import json
 
@@ -22,7 +23,10 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'f03a2ea0b16bfc14f0af5ed54553f84a0877604ca3e9fa25'
 #socketio = SocketIO(app)
-
+timeout = 10
+app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(minutes=timeout)
+#deletes session after timeout minutes
+#as of right now, it will not timeout unless you refresh or close tab
 
 @app.route('/', methods = ['POST', 'GET'])
 def home():
