@@ -1,4 +1,5 @@
 from flask import Flask, render_template, jsonify, request, url_for, flash, redirect, request, session
+import flask
 #from flask_socketio import SocketIO
 import time
 from datetime import timedelta
@@ -23,39 +24,66 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'f03a2ea0b16bfc14f0af5ed54553f84a0877604ca3e9fa25'
 #socketio = SocketIO(app)
-timeout = 10
+timeout = 20
 app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(minutes=timeout)
+
+
 #deletes session after timeout minutes
 #as of right now, it will not timeout unless you refresh or close tab
 
-@app.route('/', methods = ['POST', 'GET'])
+activeUsers = []
+
+@app.route('/')
 def home():
 	if not session.get("user"):
 		print("here")
 		return redirect("/login")
+	if not session.get("user") in activeUsers: #if I restart flask
+		print("here2")
+		return redirect("/login")
 	user = session.get('user', None)
 	print(user)
+	pusher_client.trigger('messaging', 'updateUsers', activeUsers) 
+	#sometimes activeUsers don't display on startup
+	flask.session.modified = True #should reset session timer
 	return render_template('base.html', user=user)
 
 def messageReceived(methods=['GET', 'POST']):
     print('message was received!!!')
 
-@app.route("/logout")
+@app.route("/logout", methods=['GET', 'POST'])
 def logout():
+
+	removed = session.get('user')
+	print('logged out with: ')
+	print(removed)
+	if removed in activeUsers:
+		activeUsers.remove(removed)
+	pusher_client.trigger('messaging', 'updateUsers', activeUsers)
 	session["user"] = None
+	session.clear()
 	return redirect("/")
+	#
+
+	#return redirect("/")
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	error = None
-	print(request.form)
+	#print(request.form)
 	if request.method == 'POST':
-		if request.form['pass'] != 'admin': #request.form['email'] != 'admin@gmail' or 
+		if request.form['email'] in activeUsers:
+			error = 'User already exists. Please try again.'
+		elif request.form['pass'] != 'admin': #request.form['email'] != 'admin@gmail' or 
+			#temporary fix for duplicate usernames
 			print('Incorrect')
 			error = 'Invalid Credentials. Please try again.'
 		else:
 			print('Correct')
 			session['user'] = request.form['email']
+			activeUsers.append(session['user'])
+			
+
 			return redirect("/")
 	return render_template('login.html', error=error)
 
@@ -79,20 +107,26 @@ def login():
 @app.route('/message', methods=['GET', 'POST'])
 def message():
 	try:
+		if not session.get("user"):
+			print("here3")
+			return jsonify({'result' : 'failure'})
+		# if not session.get("user") in activeUsers: #if I restart flask
+		# 	print("here4")
+		# 	return redirect(url_for('home'))
 		print(request.form)
 		username = request.form.get('user')
 		message = request.form.get('msg')
 		print(username)
 		print(message)
 		
-
-		pusher_client.trigger('messaging', 'my-event', {'user' : username, 'msg': message})
-
-		return jsonify({'result' : 'success'})
+		flask.session.modified = True #should reset session timeout timer when message is sent
+		pusher_client.trigger('messaging', 'my-event', {'user' : username, 'msg': message, 'activeUsers': activeUsers})
+		#sending list of activeUsers to see if current user is still there
+		return 'success'#jsonify({'result' : 'success'})
     
 	except Exception as e:
 		print(e)
-		return jsonify({'result' : 'failure'})
+		return 'fail'
 
 
 

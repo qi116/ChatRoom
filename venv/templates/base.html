@@ -37,19 +37,25 @@
 </form>
   
   
-<form action="/logout" method="get">
+<form id="logout" action="/logout" method="get">
   <input type="submit" value="Logout"/>
 </form>  
 
 {% if user %}
   <p class="user"><strong>User:</strong> {{ user }}
   <script>
-    var user = '{{user}}' //passes value of user from html render template to js
+    var myUser = '{{user}}' //passes value of user from html render template to js
     // user = user.replace(/&lt;/g, '<')
     // user = user.replace(/&gt;/g, '>')
-    console.log(user)
+    console.log(myUser)
   </script>
 {% endif %}
+
+  <div id="userDisplay">
+    <p id="text"> Users: </p>
+
+    
+  </div>
 
 </body>
 
@@ -59,16 +65,58 @@
   form.onsubmit = e => {
     e.preventDefault();
     fData = new FormData(form)
-    fData.append("user", user)
-    fetch("/message", {
+    fData.append("user", myUser)
+    const data = fetch("/message", {
       method: 'POST',
       body: fData
     })
     .then(r => {
+      console.log(r.result)
+      return r.json()
       form.reset();
     });
-  }   
-  
+    console.log(data)
+
+    if (data.result == 'failure') {
+      console.log("logged out")
+    }
+  }
+  /*
+  var form2 = document.querySelector('#logout');
+  form2.onsubmit = e => {
+    e.preventDefault();
+    fData2 = new FormData()
+    fData2.append("user", myUser)
+    fetch("/logout", {
+      method: 'POST',
+      body: fData2//JSON.stringify(myUser)
+    })
+    .then(r => {
+      form.reset();
+    });
+  }      
+  */
+  function displayUsers(users) {
+    console.log('displayUsers')
+    var content2 = document.getElementById("userDisplay")
+    content2.innerHTML = "<p> Users: </p>"
+
+    for (var i = 0; i<users.length; i++) {
+      var curr = users[i]
+      let message_template2 = `<article class="media">
+                                  <div class="media-content">
+                                    <div class="content">
+                                      <p>
+                                         ${curr}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </article>`;
+      var node2 = document.createElement('p')
+      node2.innerHTML = message_template2
+      content2.append(node2)
+    }
+  }
 
  </script>
 
@@ -85,6 +133,18 @@ let channel = channels.subscribe('messaging');
 // Bind a callback function to an event within the subscribed channel
 channel.bind('my-event', function (data) {
   // Do what you wish with the data from the event
+
+  //check if still logged in?
+  let users = data.activeUsers;
+  console.log('Active Users are: ')
+  console.log(users)
+  if (!users.includes(myUser)) {
+
+    fetch("/logout", {
+      method: 'GET'
+    })
+  }
+  console.log('passed')
   console.log(data)
   let user = data.user;
   let msg = data.msg;
@@ -109,6 +169,14 @@ channel.bind('my-event', function (data) {
  //Make sure to continue to use .innerHTML or be wary of XSS injection
  //The current method prevents script tags from being run, but others do not
  //In the future, also make sure to implement special character rejection E.g. <>,./ etc.
+});
+
+/*channel.bind('logout', function (data) { //to track when another user logs out
+  displayUsers(data);
+}*/
+
+channel.bind('updateUsers', function (data) { //to track when another user logs out
+  displayUsers(data);
 });
 
 //var socket = io.connect('http://' + document.domain + ':' + location.port)
