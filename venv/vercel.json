@@ -1,0 +1,21 @@
+{
+	"version": 2,
+	"builds": [
+		{
+			"src": "./index.py",
+			"use": "@vercel/python"
+		}
+	],
+	"routes": [
+		{
+			"src": "/(.*)",
+			"dest": "/"
+		}
+	],
+	"env": {
+	    "APP_ID": "@channels-app-id",
+	    "KEY": "ee9c18f3062cb4ecdf9d",
+	    "SECRET": "@channels-app-secret",
+	    "CLUSTER": "us3"
+  }
+}
