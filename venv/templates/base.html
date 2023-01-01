@@ -37,8 +37,10 @@
 </form>
   
   
-<form id="logout" action="/logout" method="get">
-  <input type="submit" value="Logout"/>
+<form id="logout" action="/logout" method="post">
+  <input type="hidden" id="hiddenUser" name="user" value={{user}} />
+
+  <input type="submit" value="Logout" id="click"/>
 </form>  
 
 {% if user %}
@@ -60,26 +62,39 @@
 </body>
 
 <script type="text/javascript">
-
+  function logoutIfFail(output) {
+    if (output.localeCompare('failure') == 0) {
+      console.log("logged out")
+      document.getElementById("hiddenUser").value = myUser
+      document.getElementById("click").click() 
+      /*fetch("/logout", {
+        method: 'POST',
+        body: null
+      })*/
+    }
+  }
   var form = document.querySelector('#msg-form');
   form.onsubmit = e => {
     e.preventDefault();
     fData = new FormData(form)
     fData.append("user", myUser)
+    var checkLoggedOut = ""; //gets the value out of the promise from fetch
     const data = fetch("/message", {
       method: 'POST',
       body: fData
     })
-    .then(r => {
-      console.log(r.result)
-      return r.json()
+    .then((r) => r.json()) //2
+    .then((out) => {
       form.reset();
+      
+      checkLoggedOut = out.result
+      console.log(checkLoggedOut); //3
+      logoutIfFail(checkLoggedOut)
     });
-    console.log(data)
-
-    if (data.result == 'failure') {
-      console.log("logged out")
-    }
+    
+    console.log(checkLoggedOut)
+    
+    console.log("missed")
   }
   /*
   var form2 = document.querySelector('#logout');
@@ -138,11 +153,12 @@ channel.bind('my-event', function (data) {
   let users = data.activeUsers;
   console.log('Active Users are: ')
   console.log(users)
+  console.log('I am: ')
+  console.log(data.sender)
   if (!users.includes(myUser)) {
 
-    fetch("/logout", {
-      method: 'GET'
-    })
+    document.getElementById("click").click() 
+
   }
   console.log('passed')
   console.log(data)

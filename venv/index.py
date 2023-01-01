@@ -24,8 +24,8 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'f03a2ea0b16bfc14f0af5ed54553f84a0877604ca3e9fa25'
 #socketio = SocketIO(app)
-timeout = 20
-app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(minutes=timeout)
+timeout = 10
+app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(seconds=timeout)
 
 
 #deletes session after timeout minutes
@@ -53,8 +53,10 @@ def messageReceived(methods=['GET', 'POST']):
 
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
-
 	removed = session.get('user')
+	if (request.method=='POST'):
+		print('entered')
+		removed = request.form.get('user')
 	print('logged out with: ')
 	print(removed)
 	if removed in activeUsers:
@@ -62,7 +64,8 @@ def logout():
 	pusher_client.trigger('messaging', 'updateUsers', activeUsers)
 	session["user"] = None
 	session.clear()
-	return redirect("/")
+	#print('redirecting')
+	return redirect(url_for("login"))
 	#
 
 	#return redirect("/")
@@ -74,7 +77,7 @@ def login():
 	if request.method == 'POST':
 		if request.form['email'] in activeUsers:
 			error = 'User already exists. Please try again.'
-		elif request.form['pass'] != 'admin': #request.form['email'] != 'admin@gmail' or 
+		elif request.form['pass'] != 'admin' and request.form['pass'] != 'onions': #request.form['email'] != 'admin@gmail' or 
 			#temporary fix for duplicate usernames
 			print('Incorrect')
 			error = 'Invalid Credentials. Please try again.'
@@ -82,8 +85,6 @@ def login():
 			print('Correct')
 			session['user'] = request.form['email']
 			activeUsers.append(session['user'])
-			
-
 			return redirect("/")
 	return render_template('login.html', error=error)
 
@@ -120,13 +121,13 @@ def message():
 		print(message)
 		
 		flask.session.modified = True #should reset session timeout timer when message is sent
-		pusher_client.trigger('messaging', 'my-event', {'user' : username, 'msg': message, 'activeUsers': activeUsers})
+		pusher_client.trigger('messaging', 'my-event', {'user' : username, 'msg': message, 'activeUsers': activeUsers, 'sender': session.get('user')})
 		#sending list of activeUsers to see if current user is still there
-		return 'success'#jsonify({'result' : 'success'})
+		return jsonify({'result' : 'success'})
     
 	except Exception as e:
 		print(e)
-		return 'fail'
+		return jsonify({'result' : 'success'})
 
 
 
