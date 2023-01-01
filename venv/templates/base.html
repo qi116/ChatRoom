@@ -54,7 +54,7 @@
 {% endif %}
 
   <div id="userDisplay">
-    <p id="text"> Users: </p>
+    <p id="text"> Online Users: </p>
 
     
   </div>
@@ -89,7 +89,7 @@
       
       checkLoggedOut = out.result
       console.log(checkLoggedOut); //3
-      logoutIfFail(checkLoggedOut)
+      logoutIfFail(checkLoggedOut) //checks if session expired when trying to send message
     });
     
     console.log(checkLoggedOut)
@@ -114,8 +114,8 @@
   function displayUsers(users) {
     console.log('displayUsers')
     var content2 = document.getElementById("userDisplay")
-    content2.innerHTML = "<p> Users: </p>"
-
+    content2.innerHTML = "<p> Online Users: </p>"
+    console.log(users)
     for (var i = 0; i<users.length; i++) {
       var curr = users[i]
       let message_template2 = `<article class="media">
@@ -155,9 +155,10 @@ channel.bind('my-event', function (data) {
   console.log(users)
   console.log('I am: ')
   console.log(data.sender)
+  //try making a route to fetch here to see if session is still active
   if (!users.includes(myUser)) {
 
-    document.getElementById("click").click() 
+    document.getElementById("click").click() //logs out
 
   }
   console.log('passed')

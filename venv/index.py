@@ -25,7 +25,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'f03a2ea0b16bfc14f0af5ed54553f84a0877604ca3e9fa25'
 #socketio = SocketIO(app)
 timeout = 10
-app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(seconds=timeout)
+app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(minutes=timeout)
 
 
 #deletes session after timeout minutes
