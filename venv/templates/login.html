@@ -1,22 +1,40 @@
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+  <!-- <link rel = "stylesheet" type="text/css" href="./style.css"> -->
+    <link rel="shortcut icon" href="#">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>-->
+    <script src="{{url_for('static', filename='styles/main.js')}}"></script>    
     <title>Login</title> 
 </head>
 <div class = "position-absolute top-50 start-50 translate-middle">
-    <div class="p-3 text-success bg-black border border-success rounded-3">
+    <div class="p-3 text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-3">
     <div class="mb-3">
-        <label for="exampleFormControlInput1" class="form-label">Username:</label>
-        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Enter...">
-        <h1></h1>
-        <label for="exampleFormControlInput1" class="form-label">Password:</label>
-        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Enter...">
-        <h1></h1>
-        <button>Login</button>
-        <label for="exampleFormControlInput1" class="form-label">New? <a href="#">Register</a></label>
-        </div>
-      </div>
+        <form id="login-form" method="post">
+            <label for="exampleFormControlInput1" class="form-label">Username:</label>
+            <input type="username" class="form-control" name="email" value="{{
+          request.form.username }}" id="exampleFormControlInput1" placeholder="Enter...">
+            <h1></h1>
+            <label for="exampleFormControlInput1" class="form-label">Password:</label>
+            <input type="password" class="form-control" name="pass" value="{{
+          request.form.pass }}" id="exampleFormControlInput2" placeholder="Enter...">
+            <h1></h1>
+            <button>Login</button>
+            <label for="exampleFormControlInput1" class="form-label">New? <a href="#">Register</a></label>
+            </div>
+        </form>
+
+        {% if error %}
+            <p class="error"><strong>Error:</strong> {{ error }}
+        {% endif %}
+    </div>
 </div>
-<div class="bg-image" 
-     style="background-image: url(https://www.bing.com/th/id/OGC.d634b74068bca1b5a2155a0d26dd8f25?pid=1.7&rurl=https%3a%2f%2fmedia.giphy.com%2fmedia%2fWoD6JZnwap6s8%2fgiphy.gif&ehk=0u2lcN5ctwWU4tJYIXd9wlNnnHEECY19PjDUt8ZO8ko%3d);
+ <div class="bg-image" 
+     style="background-image: url('https://th.bing.com/th/id/R.4b73ce011abbc862d173db659b00a2d6?rik=bPCwyhrGxXu0vg&riu=http%3a%2f%2fcdn.wallpapersafari.com%2f14%2f37%2fuFlqHc.jpg&ehk=UgVFVoIEZ1nTvYIcNdibNVHlxQGgMDQaynlzCaB%2feRg%3d&risl=&pid=ImgRaw&r=0');
             height: 100vh">
 </div>
+
+<script type="text/javascript">
+
+</script>
