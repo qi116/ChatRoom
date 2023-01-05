@@ -46,7 +46,7 @@ def home():
 	pusher_client.trigger('messaging', 'updateUsers', activeUsers) 
 	#sometimes activeUsers don't display on startup
 	flask.session.modified = True #should reset session timer
-	return render_template('base.html', user=user)
+	return render_template('register.html', user=user)
 
 def messageReceived(methods=['GET', 'POST']):
     print('message was received!!!')
