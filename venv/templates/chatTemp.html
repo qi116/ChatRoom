@@ -1,0 +1,136 @@
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+  <!-- <link rel = "stylesheet" type="text/css" href="./style.css"> -->
+    <link rel="shortcut icon" href="#">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>-->
+    <script src="{{url_for('static', filename='styles/main.js')}}"></script>    
+    <title>ChatRoom</title> 
+</head>
+<div class="position-relative">
+    <div class ="position-absolute top-0 end-0">
+        <!--div class="container">
+            <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
+                <h1 id="scrollspyHeading1">Active Users</h1>
+                <p>.</p>
+                <h2 id="scrollspyHeading2"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading3"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading4"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading5"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading2"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading3"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading4"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading5"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading2"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading3"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading4"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading5"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading5"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading5"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading5"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading5"></h2>
+                <p>.</p>
+                <h2 id="scrollspyHeading5"></h2>
+                <p>.</p>
+            </div>
+        </div-->
+        <div class="w-100 p-3">
+            <div class="p-3 text-primary-emphasis bg-primary border border-primary-subtle rounded-3">
+                <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
+                    <h4 id="scrollspyHeading1">Active Users</h4>
+                    <p>.</p>
+                    <h4 id="scrollspyHeading2"></h4>
+                    <p>.</p>
+                    <h4 id="scrollspyHeading3"></h4>
+                    <p>.</p>
+                    <h4 id="scrollspyHeading4"></h4>
+                    <p>.</p>
+                    <h4 id="scrollspyHeading5"></h4>
+                    <p>.</p>
+                    <h4 id="scrollspyHeading2"></h4>
+                    <p>.</p>
+                    <h4 id="scrollspyHeading3"></h4>
+                    <p>.</p>
+                    <h4 id="scrollspyHeading4"></h4>
+                    <p>.</p>
+                    <h4 id="scrollspyHeading5"></h4>
+                    <p>.</p>
+                    <h4 id="scrollspyHeading2"></h4>
+                    <p>.</p>
+                    <h4 id="scrollspyHeading3"></h4>
+                    <p>.</p>
+                    <h4 id="scrollspyHeading4"></h4>
+                    <p>.</p>
+                    <h4 id="scrollspyHeading5"></h4>
+                    <p>.</p>
+                  </div>
+              </div>
+        </div>
+    </div>
+</div>
+<div class="w-75 p-3">
+    <div class="p-3 text-primary-emphasis bg-primary border border-primary-subtle rounded-3">
+        <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
+            <h4 id="scrollspyHeading1">Chatroom</h4>
+            <p>.</p>
+            <h4 id="scrollspyHeading2"></h4>
+            <p>.</p>
+            <h4 id="scrollspyHeading3"></h4>
+            <p>.</p>
+            <h4 id="scrollspyHeading4"></h4>
+            <p>.</p>
+            <h4 id="scrollspyHeading5"></h4>
+            <p>.</p>
+            <h4 id="scrollspyHeading2"></h4>
+            <p>.</p>
+            <h4 id="scrollspyHeading3"></h4>
+            <p>.</p>
+            <h4 id="scrollspyHeading4"></h4>
+            <p>.</p>
+            <h4 id="scrollspyHeading5"></h4>
+            <p>.</p>
+            <h4 id="scrollspyHeading2"></h4>
+            <p>.</p>
+            <h4 id="scrollspyHeading3"></h4>
+            <p>.</p>
+            <h4 id="scrollspyHeading4"></h4>
+            <p>.</p>
+            <h4 id="scrollspyHeading5"></h4>
+            <p>.</p>
+          </div>
+      </div>
+</div>
+<div class = "fixed-bottom">
+    <div class="w-75 p-3">
+        <div class="p-3 text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-3">
+            <div class = "container">
+                <input class="form-control" type="text" placeholder="Enter Message..." aria-label="default input example">
+                <h1></h1>
+                <button>Send</button>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <!--button class="btn btn-primary me-md-2" type="button">Button</button-->
+                    <button class="btn btn-primary" type="button">Logout</button>
+                  </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
