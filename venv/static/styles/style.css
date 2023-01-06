@@ -1,0 +1,36 @@
+body {
+        overflow: hidden;
+        margin: auto;
+        background: white;
+        margin-top: 4%;
+        background-color: lightskyblue;
+
+        /*text-align: center;*/
+    }
+      
+    h1 {
+        color: blue;
+    }
+      
+    .scroll {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 450px;
+        background-color: lightskyblue;
+        border: 1px darkblue;
+        padding: 2%;
+        width: 1000px;
+        margin: 0 auto;
+        font-size: large;
+    }
+    .scroll1 {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 700px;
+        background-color: lightskyblue;
+        border: 1px darkblue;
+        padding: 2%;
+        width: 300px;
+        margin: 0 auto;
+        font-size: large;
+    }    
