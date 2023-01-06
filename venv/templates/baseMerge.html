@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> 
+
+  <title> Chat room </title>
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+  <!-- <link rel = "stylesheet" type="text/css" href="./style.css"> -->
+  <link rel="shortcut icon" href="#">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>-->
+  <script src="{{url_for('static', filename='styles/main.js')}}"></script>
+  <script src="https://js.pusher.com/5.0/pusher.min.js"></script>
+
+  <style>
+    body {
+        overflow: hidden;
+        margin: auto;
+        background: white;
+        margin-top: 4%;
+        background-color: lightskyblue;
+
+        /*text-align: center;*/
+    }
+      
+    h1 {
+        color: blue;
+    }
+      
+    .scroll {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 450px;
+        background-color: lightskyblue;
+        border: 1px darkblue;
+        padding: 2%;
+        width: 1000px;
+        margin: 0 auto;
+        font-size: large;
+    }
+    .scroll1 {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 700px;
+        background-color: lightskyblue;
+        border: 1px darkblue;
+        padding: 2%;
+        width: 300px;
+        margin: 0 auto;
+        font-size: large;
+    }    
+  </style>
+</head>
+<body>
+	
+  <!-- <h1 class = "john"> Chatroom </h1>
+	
+	<h3 style='color: #ccc;font-size: 30px;'>No message yet..</h3>
+  <button onclick = "printStatement()">bigger  </button> -->
+<!--   <div id="content">
+
+    <p id="p">No messages</p>
+  </div> -->
+  
+
+
+<div class="position-relative">
+    <div class ="position-absolute top-0 end-0">
+        <div class="w-100 p-3">
+            <!-- <div class="p-3 text-primary-emphasis bg-primary border border-primary-subtle rounded-3">
+                <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0"> -->
+          <h4 id="scrollspyHeading1">Active Users</h4>
+          
+           <div class = scroll1>
+                <div id="userDisplay">
+                  <p id="text"> Online Users: </p>
+
+                  
+                </div>
+            </div>   
+                  
+        </div>
+    </div>
+</div>
+<div class="w-75 p-3">
+
+    <div id="content"class = scroll>
+        
+    </div>
+</div>
+
+
+<div class = "fixed-bottom">
+    <div class="w-75 p-3">
+        <div class="p-3 text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-3">
+            <div class = "container">
+                <form id="msg-form">
+                  <input class="form-control" type="text" placeholder="Enter Message..." aria-label="default input example" id="msg" name="msg">
+                  <h1></h1>
+                  <input type="submit" value="Send" id="submit">
+                </form>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <!--button class="btn btn-primary me-md-2" type="button">Button</button-->
+                    <form id="logout" action="/logout" method="post">
+                      <input type="hidden" id="hiddenUser" name="user" value={{user}} />
+
+                      <input type="submit" value="Logout" id="click" class="btn btn-primary"/>
+                    </form>
+                    <!-- <button class="btn btn-primary" type="button">Logout</button> -->
+                  </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <form id="msg-form">  
+  <label for="fname">Message: </label>
+  <input type="text" id="msg" name="msg">
+  
+  <input type="submit" value="Send" id="submit"> 
+</form>
+  
+  
+<form id="logout" action="/logout" method="post">
+  <input type="hidden" id="hiddenUser" name="user" value={{user}} />
+
+  <input type="submit" value="Logout" id="click"/>
+</form>   -->
+
+{% if user %}
+  <p class="user"><strong>User:</strong> {{ user }}
+  <script>
+    var myUser = '{{user}}' //passes value of user from html render template to js
+    // user = user.replace(/&lt;/g, '<')
+    // user = user.replace(/&gt;/g, '>')
+    console.log(myUser)
+  </script>
+{% endif %}
+
+  <!-- <div id="userDisplay">
+    <p id="text"> Online Users: </p>
+
+    
+  </div> -->
+
+</body>
+
+<script type="text/javascript">
+  function logoutIfFail(output) {
+    if (output.localeCompare('failure') == 0) {
+      console.log("logged out")
+      document.getElementById("hiddenUser").value = myUser
+      document.getElementById("click").click() 
+      /*fetch("/logout", {
+        method: 'POST',
+        body: null
+      })*/
+    }
+  }
+  var form = document.querySelector('#msg-form');
+  form.onsubmit = e => {
+    e.preventDefault();
+    fData = new FormData(form)
+    fData.append("user", myUser)
+    var checkLoggedOut = ""; //gets the value out of the promise from fetch
+    const data = fetch("/message", {
+      method: 'POST',
+      body: fData
+    })
+    .then((r) => r.json()) //2
+    .then((out) => {
+      form.reset();
+      
+      checkLoggedOut = out.result
+      console.log(checkLoggedOut); //3
+      logoutIfFail(checkLoggedOut) //checks if session expired when trying to send message
+    });
+    
+    console.log(checkLoggedOut)
+    
+    console.log("missed")
+  }
+  /*
+  var form2 = document.querySelector('#logout');
+  form2.onsubmit = e => {
+    e.preventDefault();
+    fData2 = new FormData()
+    fData2.append("user", myUser)
+    fetch("/logout", {
+      method: 'POST',
+      body: fData2//JSON.stringify(myUser)
+    })
+    .then(r => {
+      form.reset();
+    });
+  }      
+  */
+  function displayUsers(users) {
+    console.log('displayUsers')
+    var content2 = document.getElementById("userDisplay")
+    content2.innerHTML = "<p> Online Users: </p>"
+    console.log(users)
+    for (var i = 0; i<users.length; i++) {
+      var curr = users[i]
+      let message_template2 = `<article class="media">
+                                  <div class="media-content">
+                                    <div class="content">
+                                      <p>
+                                         ${curr}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </article>`;
+      var node2 = document.createElement('p')
+      node2.innerHTML = message_template2
+      content2.append(node2)
+    }
+  }
+
+ </script>
+
+ <script type="text/javascript"> 
+  // Initialize Channels client
+let channels = new Pusher('ee9c18f3062cb4ecdf9d', {
+  cluster: 'us3',
+  encrypted: true
+});
+
+// Subscribe to the appropriate channel
+let channel = channels.subscribe('messaging');
+
+// Bind a callback function to an event within the subscribed channel
+channel.bind('my-event', function (data) {
+  // Do what you wish with the data from the event
+
+  //check if still logged in?
+  let users = data.activeUsers;
+  console.log('Active Users are: ')
+  console.log(users)
+  console.log('I am: ')
+  console.log(data.sender)
+  //try making a route to fetch here to see if session is still active
+  if (!users.includes(myUser)) {
+
+    document.getElementById("click").click() //logs out
+
+  }
+  console.log('passed')
+  console.log(data)
+  let user = data.user;
+  let msg = data.msg;
+  console.log(msg)
+  let message_template = `<p> <strong> ${user}: </strong> ${msg}</p>`
+  /*let message_template = `<h4 id="scrollspyHeading2"><strong>${user}: </strong>
+                                         ${msg}</h4>
+                          <p>.</p>`*/
+  /*let message_template = `<article class="media">
+                                  <div class="media-content">
+                                    <div class="content">
+                                      <p>
+                                        <strong>${user}: </strong>
+                                         ${msg}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </article>`;*/
+ var content = document.getElementById("content")
+ /*
+ var node = document.createElement('p')
+ node.innerHTML = message_template
+ content.append(node)
+  */
+ content.innerHTML = content.innerHTML + message_template
+ //Make sure to continue to use .innerHTML or be wary of XSS injection
+ //The current method prevents script tags from being run, but others do not
+ //In the future, also make sure to implement special character rejection E.g. <>,./ etc.
+});
+
+/*channel.bind('logout', function (data) { //to track when another user logs out
+  displayUsers(data);
+}*/
+
+channel.bind('updateUsers', function (data) { //to track when another user logs out
+  displayUsers(data);
+});
+
+//var socket = io.connect('http://' + document.domain + ':' + location.port)
+
+  /*socket.on('post message', function(json) {
+    console.log('posting message to board')
+
+    var paragraph = document.getElementById("p");
+    var text = document.createTextNode(json.User + ": " + json.Message);
+
+    paragraph.appendChild(text);
+    var concat = paragraph.innerHTML + "<br>"
+    paragraph.innerHTML = concat
+
+  })*/
+/*
+  function sendMessage() {
+    var msg = document.getElementById("msg").value
+    document.getElementById("msg").value = ''
+    var json = {"user" : "user", "msg" : msg}
+    console.log("Data:")
+    console.log(json)
+    pushData(json)
+  }
+*/
+
+
+  /*var input = document.getElementById("msg");
+  input.addEventListener("keyup", function(event) {
+      if (event.keyCode === 13) {
+        console.log("enter")
+          event.preventDefault();
+          document.getElementById("submit").click();
+      }
+  });*/
+/*async function pushData(data) {
+  console.log("pushData")
+  console.log(data)
+  const res = await fetch('/message', {
+    method: 'POST',
+    body: {"yo": "dog"},
+  });
+  if (!res.ok) {
+    console.error('failed to push data');
+  }
+}*/
+ </script>
